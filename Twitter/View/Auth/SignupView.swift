@@ -12,19 +12,31 @@ struct SignupView: View {
     @State private var passwordController : String = ""
     @State private var usernameController : String = ""
     @State private var nameController : String = ""
+    @State private var showImagePicker : Bool = false
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
     
     var body: some View {
         ZStack  {
             VStack {
-                Image("plus_photo")
-                    .resizable()
-                    .renderingMode(.template)
-                    .scaledToFill()
-                    .frame(width: 140, height: 140)
-                    .padding(.top, 88)
-                    .padding(.bottom, 40)
-                    .foregroundColor(.white)
+                
+                Button(
+                    action: {
+                        showImagePicker.toggle()
+                    }, label: {
+                        Image("plus_photo")
+                            .resizable()
+                            .renderingMode(.template)
+                            .scaledToFill()
+                            .frame(width: 140, height: 140)
+                            .padding(.top, 88)
+                            .padding(.bottom, 16)
+                            .foregroundColor(.white)
+                    })
+                    .sheet(isPresented: $showImagePicker, content: {
+                        ImagePicker()
+                    })
+
+
                 
              
                 AuthTextField(prefixImage: "person", initialValue: "Name", controller: $nameController)
@@ -38,8 +50,6 @@ struct SignupView: View {
                 
                 AuthTextField(prefixImage: "lock", initialValue: "Password", controller: $passwordController)
                     .padding(.bottom, 12)
-                
-             
                 .padding(.bottom, 15)
                 
                 Button(
@@ -82,8 +92,6 @@ struct SignupView: View {
 
 struct SignupView_Previews: PreviewProvider {
     static var previews: some View {
-        VStack {
-            
-        }
+       SignupView()
     }
 }
