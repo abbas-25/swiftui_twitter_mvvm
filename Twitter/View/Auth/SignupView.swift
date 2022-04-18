@@ -13,7 +13,18 @@ struct SignupView: View {
     @State private var usernameController : String = ""
     @State private var nameController : String = ""
     @State private var showImagePicker : Bool = false
+    
+    @State private var selectedUIImage : UIImage?
+    @State private var image : Image?
+    
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
+    
+    @EnvironmentObject var viewModel : AuthViewModel
+    
+    func loadImage() {
+        guard let selectedImage = selectedUIImage else { return }
+        image = Image(uiImage: selectedImage)
+    }
     
     var body: some View {
         ZStack  {
@@ -23,22 +34,41 @@ struct SignupView: View {
                     action: {
                         showImagePicker.toggle()
                     }, label: {
-                        Image("plus_photo")
-                            .resizable()
-                            .renderingMode(.template)
-                            .scaledToFill()
-                            .frame(width: 140, height: 140)
-                            .padding(.top, 88)
-                            .padding(.bottom, 16)
+                        ZStack {
+                            
+                            if let image = image {
+                                
+                                image
+                                    .resizable()
+                            
+                                    .scaledToFill()
+                                    .frame(width: 140, height: 140)
+                                    .clipShape(Circle())
+                                    .padding(.top, 88)
+                                    .padding(.bottom, 16)
+                                    
+                                
+                                
+                            } else {
+                                
+                            Image("plus_photo")
+                                .resizable()
+                                .renderingMode(.template)
+                                .scaledToFill()
+                                .frame(width: 140, height: 140)
+                                .padding(.top, 88)
+                                .padding(.bottom, 16)
                             .foregroundColor(.white)
+                            }
+                        }
                     })
-                    .sheet(isPresented: $showImagePicker, content: {
-                        ImagePicker()
+                    .sheet(isPresented: $showImagePicker, onDismiss: {
+                        loadImage()
+                    }, content: {
+                        ImagePicker(image: $selectedUIImage)
                     })
-
-
+                    
                 
-             
                 AuthTextField(prefixImage: "person", initialValue: "Name", controller: $nameController)
                     .padding(.bottom, 15)
                 
@@ -53,7 +83,9 @@ struct SignupView: View {
                 .padding(.bottom, 15)
                 
                 Button(
-                    action: {}, label: {
+                    action: {
+                        viewModel.registerUser(email: emailController, name:nameController, password: passwordController, username: usernameController, profileImage: selectedUIImage)
+                    }, label: {
                         Text("Sign Up")
                             .font(.headline)
                             .foregroundColor(.blue)
@@ -85,6 +117,8 @@ struct SignupView: View {
         .background(Color(red: 0.113, green: 0.632, blue: 0.954))
         
     .ignoresSafeArea()
+        
+        
     }
     
     

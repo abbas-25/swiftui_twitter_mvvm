@@ -52,7 +52,7 @@ struct FilterButtonView: View {
                 .padding(.leading, padding)
                 .foregroundColor(.blue)
                 .animation(.spring())
-                
+            
         }
     }
 }

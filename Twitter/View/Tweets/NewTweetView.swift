@@ -6,16 +6,33 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct NewTweetView: View {
-    @Binding var isShowingNewTweetView: Bool
+    @Binding var isPresented: Bool
     @State private var tweetContent = "What's happening?"
+    @ObservedObject var viewModel: UploadTweetViewModel
+    
+    init(isPresented: Binding<Bool>) {
+        self._isPresented = isPresented
+        self.viewModel = UploadTweetViewModel(isPresented: isPresented)
+        
+    }
+    
     var body: some View {
         
         NavigationView {
             VStack {
                 HStack (alignment: .top) {
-                        CircularImage(imageName: "batman")
+                    if let user = AuthViewModel.shared.user {
+                        KFImage(URL(string: user.profileImageUrl))
+                            .frame(width:  56, height: 56)
+                            .scaledToFill()
+                            .clipped()
+                            .cornerRadius(56/2)
+                        
+                    }
+                 
                         TextEditor(
                             text: $tweetContent)
                             .lineLimit(5)
@@ -26,7 +43,7 @@ struct NewTweetView: View {
                 .navigationBarItems(
                     
                 leading:  Button(action: {
-                        isShowingNewTweetView = false
+                        isPresented = false
                     }, label: {
                         Text("Cancel")
                             .foregroundColor(.blue)
@@ -34,7 +51,7 @@ struct NewTweetView: View {
                                     
                 trailing:    Button(
                     action: {
-                        print("Tweeted..!")
+                        viewModel.uploadTweet(content: tweetContent)
                     }, label: {
                         Text("Tweet")
                             .padding(.horizontal)
@@ -49,8 +66,8 @@ struct NewTweetView: View {
     }
 }
 
-struct NewTweetView_Previews: PreviewProvider {
-    static var previews: some View {
-        NewTweetView(isShowingNewTweetView: .constant(false))
-    }
-}
+//struct NewTweetView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        NewTweetView(isShowingNewTweetView: .constant(false))
+//    }
+//}

@@ -12,6 +12,8 @@ struct LoginView: View {
     @State private var emailController : String = ""
     @State private var passwordController : String = ""
     
+    @EnvironmentObject var viewModel: AuthViewModel
+    
     
     var body: some View {
         NavigationView {
@@ -40,7 +42,9 @@ struct LoginView: View {
                     .padding(.bottom, 15)
                     
                     Button(
-                        action: {}, label: {
+                        action: {
+                            viewModel.login(email: emailController, password: passwordController)
+                        }, label: {
                             Text("Sign in")
                                 .font(.headline)
                                 .foregroundColor(.blue)
